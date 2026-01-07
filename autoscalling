@@ -1,0 +1,340 @@
+### **1. What is AWS Auto Scaling?**
+
+**Answer:**
+AWS Auto Scaling **automatically adjusts the number of EC2 instances** in a group based on demand to ensure performance and cost optimization.
+
+---
+
+### **2. What are the main components of an Auto Scaling Group (ASG)?**
+
+**Answer:**
+
+* **Launch Template/Launch Configuration** – Defines instance settings.
+* **Auto Scaling Group** – Logical group of EC2 instances.
+* **Scaling Policies** – Define scaling behavior.
+* **Health Checks** – Ensure only healthy instances serve traffic.
+
+---
+
+### **3. What is the difference between Launch Template and Launch Configuration?**
+
+**Answer:**
+
+* **Launch Configuration:** Older, less flexible.
+* **Launch Template:** Supports multiple versions, mixed instance types, and Spot integration.
+
+---
+
+### **4. What is the minimum, desired, and maximum capacity in ASG?**
+
+**Answer:**
+
+* **Minimum:** Minimum number of instances running.
+* **Desired:** Ideal number of instances to run.
+* **Maximum:** Maximum number of instances allowed.
+
+---
+
+### **5. What is the difference between AWS Auto Scaling and EC2 Auto Scaling?**
+
+**Answer:**
+
+* **AWS Auto Scaling:** Manages scaling for multiple AWS services.
+* **EC2 Auto Scaling:** Specifically manages scaling for EC2 Auto Scaling Groups.
+
+---
+
+### **6. What are scaling policies in ASG?**
+
+**Answer:**
+
+* **Target Tracking:** Keeps metric at target value (e.g., CPU = 50%).
+* **Step Scaling:** Adjusts capacity in steps based on thresholds.
+* **Simple Scaling:** Basic add/remove instance when alarm triggers.
+* **Scheduled Scaling:** Scale at specific times.
+
+---
+
+### **7. What health checks are supported by ASG?**
+
+**Answer:**
+
+* **EC2 Status Checks**
+* **ELB Health Checks** (for load-balanced instances)
+
+---
+
+### **8. Can ASG work without a load balancer?**
+
+**Answer:**
+Yes, but using an ELB ensures traffic is routed to healthy instances.
+
+---
+
+### **9. Does ASG support Spot Instances?**
+
+**Answer:**
+Yes, with **Mixed Instance Policies**, ASG can use both On-Demand and Spot instances.
+
+---
+
+### **10. How does ASG ensure fault tolerance?**
+
+**Answer:**
+
+* Replaces unhealthy instances automatically.
+* Spreads instances across multiple AZs.
+
+---
+
+### **11. What are lifecycle hooks in ASG?**
+
+**Answer:**
+Lifecycle hooks allow **custom actions** (e.g., run scripts, configuration) when instances **launch** or **terminate**.
+
+---
+
+### **12. What is the difference between Dynamic Scaling and Predictive Scaling?**
+
+**Answer:**
+
+* **Dynamic Scaling:** Reacts to real-time metrics.
+* **Predictive Scaling:** Uses machine learning to predict future demand.
+
+---
+
+### **13. How do you attach an existing EC2 instance to an ASG?**
+
+**Answer:**
+
+* The instance must have matching configuration.
+* Attach using `aws autoscaling attach-instances`.
+
+---
+
+### **14. What is Warm Pool in ASG?**
+
+**Answer:**
+Keeps a **pool of pre-initialized instances** to reduce scaling time.
+
+---
+
+### **15. How to ensure zero downtime during scaling operations?**
+
+**Answer:**
+
+* Use **ELB health checks**.
+* Use **Rolling Updates**.
+* Configure appropriate **cooldown periods**.
+
+---
+
+### **16. What is cooldown in ASG?**
+
+**Answer:**
+A period (default 300s) during which ASG **waits before taking another scaling action** to prevent rapid scaling.
+
+---
+
+### **17. Can ASG span multiple Availability Zones (AZs)?**
+
+**Answer:**
+Yes, and it’s recommended for **high availability**.
+
+---
+
+### **18. What are Scaling Cooldowns vs Health Check Grace Period?**
+
+**Answer:**
+
+* **Cooldown:** Wait time before another scaling action.
+* **Grace Period:** Wait time before checking the health of a newly launched instance.
+
+---
+
+### **19. How do you scale based on custom metrics?**
+
+**Answer:**
+
+* Publish **custom metrics** to CloudWatch.
+* Create an alarm on that metric.
+* Attach alarm to ASG policy.
+
+---
+
+### **20. How do you use Auto Scaling with ECS (containers)?**
+
+**Answer:**
+Use **Service Auto Scaling** to adjust ECS tasks or integrate EC2 ASG with ECS cluster.
+
+---
+
+### **21. Scenario: You need to add instances only during business hours.**
+
+**Answer:**
+Use **Scheduled Scaling** to increase/decrease capacity at specific times.
+
+---
+
+### **22. Scenario: Scaling is too aggressive, causing instability.**
+
+**Answer:**
+
+* Increase **cooldown period**.
+* Use **Target Tracking** instead of Step Scaling.
+
+---
+
+### **23. Scenario: Instances take too long to become healthy after launch.**
+
+**Answer:**
+
+* Increase **Health Check Grace Period**.
+* Use **Warm Pools**.
+
+---
+
+### **24. Scenario: You need to run custom configuration scripts before instances serve traffic.**
+
+**Answer:**
+Use **Lifecycle Hooks** (e.g., wait for user data to complete before moving to `InService`).
+
+---
+
+### **25. Scenario: Scaling down terminates the newest instance, but you need oldest first.**
+
+**Answer:**
+Change **termination policy** to `OldestInstance`.
+
+---
+
+### **26. What termination policies are available in ASG?**
+
+**Answer:**
+
+* **Default** (oldest instance in oldest AZ)
+* **Oldest Instance**
+* **Newest Instance**
+* **Oldest Launch Configuration**
+* **Closest to Next Billing Hour**
+* **Custom** (combination)
+
+---
+
+### **27. Scenario: You want ASG to launch both Spot and On-Demand instances.**
+
+**Answer:**
+Use **Mixed Instance Policy** in ASG with defined percentages.
+
+---
+
+### **28. Scenario: Users report traffic drops during scaling events.**
+
+**Answer:**
+
+* Check **Load Balancer health check configuration**.
+* Use **Connection Draining** / **Deregistration Delay**.
+
+---
+
+### **29. Scenario: Scale based on SQS queue length.**
+
+**Answer:**
+
+* Publish queue length as a CloudWatch metric.
+* Attach scaling policy to adjust instance count accordingly.
+
+---
+
+### **30. Scenario: ASG is not scaling as expected.**
+
+**Answer:**
+
+* Check CloudWatch alarms.
+* Verify IAM permissions.
+* Ensure scaling policies are active.
+
+---
+
+### **31. Scenario: You want to minimize costs while keeping high availability.**
+
+**Answer:**
+
+* Use Spot Instances with On-Demand fallback.
+* Use multiple AZs.
+
+---
+
+### **32. Scenario: Ensure ASG works during AZ failure.**
+
+**Answer:**
+
+* Configure ASG with at least **2 AZs**.
+* Set minimum capacity >1.
+
+---
+
+### **33. Scenario: You need to stop instances instead of terminating them during scale-in.**
+
+**Answer:**
+
+* Use Lambda triggered by scale-in lifecycle hook to stop instances.
+
+---
+
+### **34. Scenario: Need to control scaling behavior using machine learning.**
+
+**Answer:**
+Use **Predictive Scaling** with AWS Auto Scaling.
+
+---
+
+### **35. Scenario: Instances keep terminating due to health check failures.**
+
+**Answer:**
+
+* Check **User Data** script.
+* Increase **Health Check Grace Period**.
+* Verify load balancer health check path.
+
+---
+
+### **36. Scenario: Run different instance types in the same ASG.**
+
+**Answer:**
+Use **Launch Template with multiple instance types**.
+
+---
+
+### **37. Scenario: New instances must register with a configuration management tool before serving traffic.**
+
+**Answer:**
+Implement **Lifecycle Hook** with SNS/Lambda to complete registration.
+
+---
+
+### **38. Scenario: How to test ASG scaling policies safely?**
+
+**Answer:**
+
+* Use **manual scaling** first.
+* Use **test metrics** with temporary alarms.
+
+---
+
+### **39. Scenario: You need to ensure scaling policies do not conflict.**
+
+**Answer:**
+
+* Use **Target Tracking** (simpler) instead of multiple Step/Simple scaling policies.
+
+---
+
+### **40. Scenario: How to audit scaling events?**
+
+**Answer:**
+
+* Use **CloudTrail** to log scaling actions.
+* Use **CloudWatch Events** to track lifecycle events.
+
+---
